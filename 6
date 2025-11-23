@@ -1,0 +1,118 @@
+!pip install scikit-fuzzy
+
+x = 0:0.1:10;  
+y = gaussmf(x,[1 4]); plot(x,y);  
+xlabel('Gaussian MF, p = (x,[1 4])');  
+ylabel('Fuzziness');  
+ylim([-0.05 1.05]); 
+ 
+x = 0:0.1:10;  
+y = pimf(x,[1,4, 5,7]);  
+plot(x,y);  
+xlabel('PI MF, p = (x,[1,4,5,7])');  
+ylabel('Fuzziness'); 
+ 
+x = 0:0.1:10;                 % Range of x values 
+y = smf(x,[1 4]);             % Sigmoidal membership function with parameters [1,4] 
+plot(x,y,'b','LineWidth',2);  % Plot y vs x 
+xlabel('x'); 
+ylabel('Fuzziness (Membership Value)'); 
+title('Sigmoidal MF with parameters [1,4]'); 
+ylim([-0.05 1.05]);           % Keep y-axis between -0.05 and 1.05 
+grid on; 
+ 
+x = 0:0.1:10;  
+y = sigmf(x,[1,4]);  
+plot(x,y);  
+xlabel('Sigmoidal MF, p = (x,[1,4])'); ylabel('Fuzziness');  
+ylim([-0.05 1.05]);  
+ 
+x = 0:10;  
+y = trapmf(x,[1 4 6 9]);  
+plot(x,y);  
+xlabel('trapezoidal MF,p = (x,[1 4 6 9])');  
+ylabel('Fuzziness');  
+ylim([-0.05,1,05]); 
+
+x = 0:10;  
+y = trimf(x,[3 6 10]); plot(x, y);  
+xlabel('triangular MF, p= x,[3,4,10]')  
+ylabel('Fuzziness')  
+ylim([-0.05 1.05]);
+
+⭐ Gaussian Membership Function
+import numpy as np
+import skfuzzy as fuzz
+import matplotlib.pyplot as plt
+
+x = np.arange(0, 10.1, 0.1)
+y = fuzz.gaussmf(x, 4, 1)   # center=4, sigma=1
+
+plt.plot(x, y)
+plt.xlabel("x")
+plt.ylabel("Fuzziness")
+plt.title("Gaussian MF [sigma=1, mean=4]")
+plt.ylim([-0.05, 1.05])
+plt.grid(True)
+plt.show()
+
+⭐ PI Membership Function
+x = np.arange(0, 10.1, 0.1)
+y = fuzz.pimf(x, 1, 4, 5, 7)
+
+plt.plot(x, y)
+plt.title("PI MF [1,4,5,7]")
+plt.xlabel("x")
+plt.ylabel("Fuzziness")
+plt.grid(True)
+plt.show()
+
+⭐ S-shaped Sigmoidal MF (smf)
+y = fuzz.smf(x, 1, 4)
+plt.plot(x, y)
+plt.title("Sigmoidal MF (smf) [1,4]")
+plt.xlabel("x")
+plt.ylabel("Fuzziness")
+plt.ylim([-0.05, 1.05])
+plt.grid(True)
+plt.show()
+
+⭐ Logistic Sigmoid MF (sigmf)
+y = fuzz.sigmf(x, 4, 1)   # b=4, a=1  (sigmf(x, [a,b]))
+
+plt.plot(x, y)
+plt.title("Sigmoid MF (sigmf) [a=1, b=4]")
+plt.xlabel("x")
+plt.ylabel("Fuzziness")
+plt.ylim([-0.05, 1.05])
+plt.grid(True)
+plt.show()
+
+⭐ Trapezoidal MF
+y = fuzz.trapmf(x, [1, 4, 6, 9])
+
+plt.plot(x, y)
+plt.title("Trapezoidal MF [1,4,6,9]")
+plt.xlabel("x")
+plt.ylabel("Fuzziness")
+plt.ylim([-0.05, 1.05])
+plt.grid(True)
+plt.show()
+
+⭐ Triangular MF
+y = fuzz.trimf(x, [3, 6, 10])
+
+plt.plot(x, y)
+plt.title("Triangular MF [3,6,10]")
+plt.xlabel("x")
+plt.ylabel("Fuzziness")
+plt.ylim([-0.05, 1.05])
+plt.grid(True)
+plt.show()
+
+ 
+ 
+ 
+ 
+ 
+ 

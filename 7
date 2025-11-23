@@ -1,0 +1,191 @@
+⭐ 1) SHORT VERSION — MAX MEMBERSHIP (SOM, LOM, MOM)
+import numpy as np
+import skfuzzy as fuzz
+import matplotlib.pyplot as plt
+
+x = np.arange(0, 10.1, 0.1)
+mfx = fuzz.trapmf(x, [3, 5, 7, 9])
+
+# Defuzzification
+som = fuzz.defuzz(x, mfx, 'som')
+lom = fuzz.defuzz(x, mfx, 'lom')
+mom = fuzz.defuzz(x, mfx, 'mom')
+
+print("SOM:", som)
+print("LOM:", lom)
+print("MOM:", mom)
+
+plt.plot(x, mfx, 'k')
+plt.axvline(som, color='c', linestyle='--', label=f'SOM={som:.2f}')
+plt.axvline(lom, color='m', linestyle='--', label=f'LOM={lom:.2f}')
+plt.axvline(mom, color='g', linestyle='--', label=f'MOM={mom:.2f}')
+plt.title("Max Membership Defuzzification")
+plt.legend()
+plt.grid(True)
+plt.show()
+
+⭐ 2) SHORT VERSION — CENTROID DEFUZZIFICATION
+import numpy as np
+import skfuzzy as fuzz
+import matplotlib.pyplot as plt
+
+x = np.arange(0, 10.1, 0.1)
+mfx = fuzz.trimf(x, [2, 5, 8])
+
+centroid = fuzz.defuzz(x, mfx, 'centroid')
+print("Centroid:", centroid)
+
+plt.plot(x, mfx, 'k')
+plt.axvline(centroid, color='r', linestyle='--', label=f'Centroid={centroid:.2f}')
+plt.title("Centroid Defuzzification")
+plt.legend()
+plt.grid(True)
+plt.show()
+
+⭐ 3) SHORT VERSION — WEIGHTED AVERAGE DEFUZZIFICATION
+import numpy as np
+import skfuzzy as fuzz
+import matplotlib.pyplot as plt
+
+x = np.arange(0, 10.1, 0.1)
+
+centers = np.array([2, 5, 8])
+weights = np.array([0.4, 0.8, 0.6])
+
+wa = np.sum(centers * weights) / np.sum(weights)
+print("Weighted Average:", wa)
+
+low    = fuzz.trimf(x, [0, 2, 5])
+medium = fuzz.trimf(x, [2, 5, 8])
+high   = fuzz.trimf(x, [5, 8, 10])
+
+plt.plot(x, low, 'b')
+plt.plot(x, medium, 'g')
+plt.plot(x, high, 'm')
+plt.axvline(wa, color='r', linestyle='--', label=f'WA={wa:.2f}')
+plt.legend()
+plt.title("Weighted Average Defuzzification")
+plt.grid(True)
+plt.show()
+
+
+# Max-Membership Principle import numpy as np
+import skfuzzy as fuzz
+import matplotlib.pyplot as plt
+
+
+# 1. Define the universe of discourse for the output variable.
+#	np.arange creates a NumPy array. Here, it will produce 101 elements from 0 to 10. x = np.arange(0, 10.1, 0.1)
+
+# 2. Define the trapezoidal fuzzy membership function.
+#	The parameters [a, b, c, d] must be within the range of x.
+#	Example: [3, 5, 7, 9] fits within the universe of discourse [0, 10.1].
+abcd = [3, 5, 7, 9]
+mfx = fuzz.trapmf(x, abcd)
+# 3. Verify that the dimensions match before plotting. print(f"Shape of x: {x.shape}")
+print(f"Shape of mfx: {mfx.shape}")
+
+
+# 4. Defuzzify using different methods.
+fom_val = fuzz.defuzz(x, mfx, 'som') # Smallest of Maximum lom_val = fuzz.defuzz(x, mfx, 'lom') # Largest of Maximum mom_val = fuzz.defuzz(x, mfx, 'mom') # Mean of Maximum
+
+# 5. Plot the fuzzy set and defuzzified results.
+ 
+fig, ax = plt.subplots(figsize=(10, 6))
+ax.plot(x, mfx, 'k', linewidth=2.5, label='Fuzzy Set')
+
+
+# Indicate the maximum membership level. max_membership = np.max(mfx)
+ax.axhline(y=max_membership, color='gray', linestyle=':', label='Max Membership')
+
+
+# Calculate heights for defuzzified values.
+height_fom = fuzz.interp_membership(x, mfx, fom_val) height_lom = fuzz.interp_membership(x, mfx, lom_val) height_mom = fuzz.interp_membership(x, mfx, mom_val)
+
+# Plot vertical lines for each defuzzified value.
+ax.axvline(x=fom_val, ymax=height_fom, color='c', linestyle='--', label=f'FoM ({fom_val:.2f})') ax.axvline(x=lom_val, ymax=height_lom, color='m', linestyle='--', label=f'LoM ({lom_val:.2f})') ax.axvline(x=mom_val, ymax=height_mom, color='g', linestyle='--', label=f'MoM ({mom_val:.2f})')
+
+# Add titles, labels, legend, and grid.
+ax.set_title('Max-Membership Principle Defuzzification') ax.set_xlabel('Universe of Discourse (Output Value)') ax.set_ylabel('Membership Grade')
+ax.legend() ax.grid(True)
+# Display the plot. plt.show()
+
+# Centroid Defuzzification Example import numpy as np
+import skfuzzy as fuzz
+import matplotlib.pyplot as plt
+
+
+# 1. Define the universe of discourse (x-axis)
+# This creates a NumPy array from 0 to 10 with a step of 0.1, giving 101 points. x = np.arange(0, 10.1, 0.1)
+
+# 2. Define a fuzzy membership function (y-axis)
+# Example: Triangular membership function with parameters [a, b, c] # Parameters must fall within the range of x.
+mfx = fuzz.trimf(x, [2, 5, 8])
+
+
+# 3. Calculate the centroid (center of gravity)
+ 
+# fuzz.defuzz() takes the x-range, membership values, and the method name. centroid_value = fuzz.defuzz(x, mfx, 'centroid')
+
+print(f"The defuzzified centroid value is: {centroid_value:.2f}")
+
+
+# 4. Plot the fuzzy set and its centroid fig, ax = plt.subplots(figsize=(10, 6))
+
+# Plot the fuzzy membership function
+ax.plot(x, mfx, 'k', linewidth=2.5, label='Fuzzy Set')
+
+
+# Get the membership value at the centroid for plotting the line height_centroid = fuzz.interp_membership(x, mfx, centroid_value)
+
+# Plot a vertical dashed line at the centroid value ax.axvline(x=centroid_value, ymax=height_centroid, color='r', linestyle='--',
+label=f'Centroid ({centroid_value:.2f})')
+
+
+# Add labels, title, legend, and grid for better visualization ax.set_title('Centroid Defuzzification') ax.set_xlabel('Universe of Discourse (x)') ax.set_ylabel('Membership Grade')
+ax.set_ylim(-0.1, 1.1) ax.legend() ax.grid(True)
+
+# Display the plot plt.show()
+
+
+# Weighted Average Defuzzification import numpy as np
+import skfuzzy as fuzz
+import matplotlib.pyplot as plt
+
+
+# 1. Define the universe of discourse (x-axis) x = np.arange(0, 11, 0.1)
+
+# 2. Define the centers and weights centers = np.array([2, 5, 8])
+weights = np.array([0.4, 0.8, 0.6])
+
+
+# 3. Calculate the weighted average
+weighted_average = np.sum(centers * weights) / np.sum(weights) print(f"The defuzzified weighted average is: {weighted_average:.2f}")
+ 
+# 4. Define the symmetrical output membership functions
+# Each tuple [a, b, c] defines a triangular membership function low_mf = fuzz.trimf(x, [0, 2, 5])
+medium_mf = fuzz.trimf(x, [2, 5, 8])
+high_mf = fuzz.trimf(x, [5, 8, 10])
+
+
+# 5. Visualize the result
+fig, ax = plt.subplots(figsize=(10, 6))
+
+
+# Plot each fuzzy set
+ax.plot(x, low_mf, 'b', linewidth=1.5, label='Low') ax.plot(x, medium_mf, 'g', linewidth=1.5, label='Medium') ax.plot(x, high_mf, 'm', linewidth=1.5, label='High')
+
+# Plot the centers of each membership function
+ax.plot(centers, np.array([1, 1, 1]), 'ko', label='Centers ($c_i$)')
+
+
+# Plot the weighted average result as a vertical dashed line
+height_wa = fuzz.interp_membership(x, medium_mf, weighted_average) # Use one of the MFs for height ax.axvline(x=weighted_average, ymax=height_wa, color='r', linestyle='--',
+label=f'Weighted Average ({weighted_average:.2f})')
+
+
+# Add labels, title, and legend ax.set_title('Weighted Average Defuzzification')
+ax.set_xlabel('Universe of Discourse (Output Value)') ax.set_ylabel('Membership Grade')
+ax.set_ylim(-0.1, 1.1) ax.legend() ax.grid(True)
+
+# Display the plot plt.show()

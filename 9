@@ -1,0 +1,27 @@
+⭐ Mini Project: Student Marks Prediction (Short, Easy, Perfect)
+import numpy as np
+from sklearn.linear_model import LinearRegression
+import matplotlib.pyplot as plt
+
+# Sample small dataset (Hours Studied vs Marks)
+hours = np.array([1,2,3,4,5,6,7,8,9]).reshape(-1,1)
+marks = np.array([35,40,50,55,65,70,75,80,90])
+
+# Train model
+model = LinearRegression()
+model.fit(hours, marks)
+
+# Predict marks for test hours
+test_hours = np.array([[4.5], [7]])
+predicted = model.predict(test_hours)
+
+print("Predicted marks:", predicted)
+
+# Plot
+plt.scatter(hours, marks, color='blue', label="Actual")
+plt.plot(hours, model.predict(hours), color='red', label="Regression Line")
+plt.xlabel("Hours Studied")
+plt.ylabel("Marks")
+plt.title("Student Marks Prediction")
+plt.legend()
+plt.show()

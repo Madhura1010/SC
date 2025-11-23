@@ -1,0 +1,72 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+
+# Manual dataset (same pattern as Salary_Data)
+df = pd.DataFrame({
+    "YearsExperience": [1.1, 2.3, 3.0, 3.8, 4.5, 5.2, 6.1, 7.0, 8.2, 9.0],
+    "Salary": [39343, 46205, 55743, 56957, 61111, 66000, 83088, 91000, 101302, 113812]
+})
+
+X = df[['YearsExperience']]
+y = df['Salary']
+
+model = LinearRegression()
+model.fit(X, y)
+
+# Generate predictions across all X for a smooth line
+X_line = np.linspace(X.min(), X.max(), 100).reshape(-1, 1)
+y_line = model.predict(X_line)
+
+print("Slope:", model.coef_[0])
+print("Intercept:", model.intercept_)
+
+# Plot ALL blue points + long red line
+plt.scatter(X, y, color='blue', label="Actual Data")
+plt.plot(X_line, y_line, color='red', linewidth=2, label="Regression Line")
+plt.xlabel("Years of Experience")
+plt.ylabel("Salary")
+plt.title("Actual vs Predicted Salary")
+plt.legend()
+
+#download csv
+
+# Step 1: Import libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+
+# Step 2: Read CSV file
+df = pd.read_csv("/content/Salary_Data.csv")
+
+# Step 3: Split dataset into features (X) and target (y)
+X = df[['YearsExperience']]  # Independent variable
+y = df['Salary']  # Dependent variable
+
+# Step 4: Train-test split (80% train, 20% test)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Step 5: Train the Linear Regression model
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Step 6: Make predictions
+y_pred = model.predict(X_test)
+
+# Step 7: Scatter plot (Actual vs Predicted) with regression line
+plt.scatter(X_test, y_test, color='blue', label="Actual Data")  # Actual points
+plt.plot(X_test, y_pred, color='red', linewidth=2, label="Predicted Line")  # Regression line
+plt.xlabel("Years of Experience")
+plt.ylabel("Salary")
+plt.title("Actual vs Predicted Salary")
+plt.legend()
+plt.show()
+
+# Step 8: Print comparison
+comparison = pd.DataFrame({'Actual Salary': y_test, 'Predicted Salary': y_pred})
+print(comparison)
+
+plt.show()

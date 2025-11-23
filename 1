@@ -1,0 +1,56 @@
+# AND Gate using MP Neuron Model
+
+x1 = [0, 0, 1, 1]
+x2 = [0, 1, 0, 1]
+w1 = 1
+w2 = 1
+theta = 2
+
+print(" x1 x2|output")
+print("-----------------")
+
+for i in range(4):
+  net = x1[i]*w1 + x2[i]*w2
+  out = 1 if net >= theta else 0
+  print(f" {x1[i]}  {x2[i]} | {out}")
+
+
+# OR Gate (MP neuron)
+x1 = [0, 0, 1, 1]
+x2 = [0, 1, 0, 1]
+w1=w2=1
+theta = 1
+
+print("x1  x2|output")
+print("-------------")
+
+for i in range(4):
+  net = x1[i]*w1 + x2[i]*w2
+  out = 1 if net >= theta else 0
+
+
+x1 = [0, 0, 1, 1]
+x2 = [0, 1, 0, 1]
+w1 = w2 = 1
+theta = 1
+
+print("x1  x2|output")
+print("-------------")
+
+for i in range(4):
+  net = x1[i]*w1 + x2[i]*w2
+  out = 0 if net >= theta else 1
+
+  print(f"{x1[i]} {x2[i]} | {out}")
+
+# XOR Gate (MP Neuron using XOR operator)
+x1 = [0, 0, 1, 1]
+x2 = [0, 1, 0, 1]
+
+print("x1  x2|output")
+print("---------------")
+
+for i in range(4):
+  out = x1[i] ^ x2[i]
+  print(f"{x1[i]}   {x2[i]} | {out}")
+  print(f"{x1[i]}  {x2[i]} | {out}")

@@ -1,0 +1,127 @@
+import numpy as np
+np.random.seed(1)
+
+# XOR dataset
+X = np.array([[0,0],[0,1],[1,0],[1,1]])
+y = np.array([[0],[1],[1],[0]])
+
+# small 2-2-1 network params
+W1 = np.random.randn(2,2); b1 = np.zeros((1,2))
+W2 = np.random.randn(2,1); b2 = np.zeros((1,1))
+lr = 0.5
+sig  = lambda x: 1/(1+np.exp(-x))
+dsig = lambda a: a*(1-a)
+
+# training (batch updates, simple and fast)
+for epoch in range(20000):
+    # forward
+    z1 = X.dot(W1) + b1
+    a1 = sig(z1)
+    z2 = a1.dot(W2) + b2
+    a2 = sig(z2)
+
+    # backprop
+    e2 = a2 - y
+    d2 = e2 * dsig(a2)
+    d1 = d2.dot(W2.T) * dsig(a1)
+
+    # update weights (batch)
+    W2 -= lr * a1.T.dot(d2)
+    b2 -= lr * d2.sum(axis=0, keepdims=True)
+    W1 -= lr * X.T.dot(d1)
+    b1 -= lr * d1.sum(axis=0, keepdims=True)
+
+# outputs
+print("Final outputs (probabilities):")
+print(a2.round(4))
+binary = (a2 > 0.5).astype(int)
+print("\nBinary predictions:")
+print(binary)
+acc = np.mean(binary == y) * 100
+print(f"\nAccuracy: {acc:.2f}%")
+
+Program :
+
+import numpy as np
+
+class NeuralNetwork:
+    def __init__(self, layers, alpha=0.1):
+        self.w = []
+        self.layers = layers
+        self.alpha = alpha
+
+        # Initialize weights
+        for i in range(0, len(layers) - 2):
+            w = np.random.randn(layers[i] + 1, layers[i + 1] + 1)
+            self.w.append(w / np.sqrt(layers[i]))
+
+        # Output layer (no extra bias on output)
+        w = np.random.randn(layers[-2] + 1, layers[-1])
+        self.w.append(w / np.sqrt(layers[-2]))
+
+    def sigmoid(self, x):
+        return 1.0 / (1 + np.exp(-x))
+
+    def sigmoid_deriv(self, x):
+        return x * (1 - x)
+
+    def fit(self, X, y, epochs=1000, display=1000):
+        X = np.c_[X, np.ones((X.shape[0]))]  # add bias term
+
+        for epoch in range(epochs):
+            for i in range(X.shape[0]):
+                A = [X[i]]  # store activations layer-wise
+
+                # Forward pass
+                for layer in range(len(self.w)):
+                    net = A[layer].dot(self.w[layer])
+                    out = self.sigmoid(net)
+                    A.append(out)
+
+                # Backward pass
+                error = A[-1] - y[i]  # error at output
+                D = [error * self.sigmoid_deriv(A[-1])]
+
+                for layer in range(len(A) - 2, 0, -1):
+                    delta = D[-1].dot(self.w[layer].T) * self.sigmoid_deriv(A[layer])
+                    D.append(delta)
+                D = D[::-1]
+
+                # Weight update
+                for layer in range(len(self.w)):
+                    self.w[layer] += -self.alpha * A[layer].reshape(-1, 1).dot(D[layer].reshape(1, -1))
+
+            # Optional: print loss
+            if epoch % display == 0:
+                loss = np.mean((y - self.predict_raw(X)) ** 2)
+                print(f"[INFO] epoch={epoch}, loss={loss:.4f}")
+
+    def predict_raw(self, X):
+        for layer in range(len(self.w)):
+            X = self.sigmoid(X.dot(self.w[layer]))
+        return X
+
+    def predict(self, X):
+        X = np.c_[X, np.ones((X.shape[0]))]
+        return self.predict_raw(X)
+#create XOR dataset
+x = np.array([[0,0], [0,1], [1,0], [1,1]])
+y = np.array([[0], [1], [1], [0]])
+
+#Initialize and train the network
+nn = NeuralNetwork([2,2,1], alpha = 0.5)          #2 input, 2 hidden layer, 1 output
+nn.fit(x, y, epochs = 20000)
+
+#Make predictions and evaluate
+predictions = nn.predict(x)
+print("Predictions after training : ")
+print(predictions)
+
+#Threshold predictions for binary classifications
+binary_predictions = (predictions > 0.5).astype(int)
+print("\nBinary Predictions : ")
+print(binary_predictions)
+
+#Calculate accuracy
+accuracy = np.mean(binary_predictions == y)
+print(f"\nAccuracy : {accuracy * 100:.2f}%")

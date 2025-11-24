@@ -1,0 +1,116 @@
+OPTION A — MATLAB (recommended if your lab has MATLAB)
+Step-by-step (GUI quick method)
+
+Open MATLAB. Type fuzzy in command window → opens Fuzzy Logic Designer (GUI).
+
+In the GUI: File → New Mamdani FIS (or newfis in code).
+
+Add input variable(s): set universe (e.g., temperature 0–100). Add MFs (trimf/trapmf/gaussmf).
+
+Add output variable: set universe and MFs (e.g., fan speed low/med/high).
+
+Click Rules → add IF–THEN rules (use AND/OR). Example: IF temp IS high AND humidity IS low THEN fan IS fast.
+
+Use Rule viewer and Surface viewer to visualize firing strengths and output surface.
+
+Use Defuzzification method (centroid) — check result on Rule Viewer (shows crisp output).
+
+Save the FIS file (.fis) and export rules/plots for your report.
+
+Short MATLAB script (non-GUI; create same FIS programmatically)
+% create Mamdani FIS
+fis = newfis('fanControl','mamdani');
+
+% add inputs
+fis = addvar(fis,'input','temperature',[0 100]);
+fis = addmf(fis,'input',1,'cold','trimf',[0 0 40]);
+fis = addmf(fis,'input',1,'warm','trimf',[30 50 70]);
+fis = addmf(fis,'input',1,'hot','trimf',[60 100 100]);
+
+% add output
+fis = addvar(fis,'output','fan',[0 100]);
+fis = addmf(fis,'output',1,'low','trimf',[0 0 40]);
+fis = addmf(fis,'output',1,'med','trimf',[30 50 70]);
+fis = addmf(fis,'output',1,'high','trimf',[60 100 100]);
+
+% add rules: [in1mf in2mf ... outmf weight operator]
+rules = [ 3 1 1 1 1;  % IF temp is hot THEN fan is high
+          2 1 2 1 1;  % IF temp is warm THEN fan is med
+          1 1 1 1 1]; % IF temp is cold THEN fan is low
+fis = addrule(fis,rules);
+
+% simulate & defuzzify
+temp_val = 68;
+out = evalfis(temp_val, fis);    % returns defuzzified crisp output
+disp(['Crisp output (fan) = ', num2str(out)])
+
+% plot
+figure; plotfis(fis);
+figure; ruleview(fis);
+
+
+What to show in lab:
+
+Screen of FIS editor with MFs.
+
+Rule viewer showing firing levels and crisp output.
+
+Surface viewer (2D/3D) if you have 2 inputs.
+
+Print evalfis result and mention defuzzification method.
+
+
+#OPTION B — Python / Colab (scikit-fuzzy) — you can run in Colab if MATLAB isn’t available
+Install
+
+In Colab first cell:
+
+!pip install -q scikit-fuzzy
+
+Short, exam-ready Python code (Mamdani using skfuzzy.control)
+import numpy as np
+import skfuzzy as fuzz
+from skfuzzy import control as ctrl
+import matplotlib.pyplot as plt
+
+# 1. Define fuzzy variables (universe)
+temp = ctrl.Antecedent(np.arange(0, 101, 1), 'temp')
+cover = ctrl.Antecedent(np.arange(0, 101, 1), 'cover')   # example second input
+speed = ctrl.Consequent(np.arange(0, 101, 1), 'speed')
+
+# 2. Membership functions (triangular)
+temp['cool'] = fuzz.trimf(temp.universe, [0, 0, 50])
+temp['warm'] = fuzz.trimf(temp.universe, [25, 50, 75])
+temp['hot']  = fuzz.trimf(temp.universe, [50, 75, 100])
+cover['sunny'] = fuzz.trimf(cover.universe, [0, 0, 50])
+cover['cloudy']= fuzz.trimf(cover.universe, [25,50,75])
+speed['slow'] = fuzz.trimf(speed.universe, [0, 0, 50])
+speed['fast'] = fuzz.trimf(speed.universe, [50, 100, 100])
+
+# 3. Rules
+rule1 = ctrl.Rule(temp['hot'] & cover['sunny'], speed['fast'])
+rule2 = ctrl.Rule(temp['cool'], speed['slow'])
+
+# 4. Control system
+system = ctrl.ControlSystem([rule1, rule2])
+sim = ctrl.ControlSystemSimulation(system)
+
+# 5. Input and compute
+sim.input['temp'] = 68
+sim.input['cover'] = 30
+sim.compute()
+print("Crisp output (speed) =", sim.output['speed'])
+
+# 6. Plots (optional)
+temp.view()
+speed.view()
+plt.show()
+
+
+#What to show in lab:
+
+Printout of sim.output['speed'] (the crisp value).
+
+Plots of input MFs and output MFs (temp.view() / speed.view()).
+
+Optional: rule firing graph via rule.view() or show controlsystemsimulation result.
